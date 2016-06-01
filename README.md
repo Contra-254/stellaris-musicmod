@@ -11,7 +11,7 @@ It is a Commandline tool that helps to create a music mod with music of your cho
 
   -n, --modname      Required. Name of the mod. Can contain whitespaces
 
-  --version          (Default: 1.0.3) Mod will support this version of
+  --version          (Default: 1.1.0) Mod will support this version of
                      Stellaris
 
   --volume           (Default: 0.62) Volume of every song
