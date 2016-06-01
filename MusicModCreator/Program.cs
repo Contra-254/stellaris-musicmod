@@ -26,9 +26,13 @@ namespace MusicModCreator
             {
                 return;
             }
-            
 
-            CreateDescriptions(result, targetMusicPath);
+
+            if (!CreateDescriptions(result, targetMusicPath))
+            {
+                Console.WriteLine("Error: Couldn't create all mod description files");
+                return;
+            }
 
             IoService.CopyMusicFiles(result.Value.MusicPath, targetMusicPath);
         }
@@ -49,15 +53,15 @@ namespace MusicModCreator
                 var musicModPath = Path.Combine(result.Value.ModPath, modName.Replace(" ", string.Empty).ToLower());
                 
                 var descriptorPath = Path.Combine(musicModPath, "descriptor.mod");
-                Console.WriteLine("Creating descriptor.mod file");
+                Console.WriteLine("Creating file {0}", descriptorPath);
                 File.WriteAllText(descriptorPath, modDescription);
 
                 var songsTxt = Path.Combine(targetMusicPath, "songs.txt");
-                Console.WriteLine("Creating songs.txt file");
+                Console.WriteLine("Creating file {0}", songsTxt);
                 File.WriteAllText(songsTxt, songListing);
 
                 var songsAsset = Path.Combine(targetMusicPath, "songs.asset");
-                Console.WriteLine("Creating songs.asset file");
+                Console.WriteLine("Creating file {0}\r\n", songsAsset);
                 File.WriteAllText(songsAsset, assetListing);
             }
             catch (Exception e)

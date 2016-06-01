@@ -18,7 +18,7 @@ It is a Commandline tool that helps to create a music mod with music of your cho
 
   --modpath          Location where the mod will be created
 
-Example: MusicModCreator.exe -m "C:\MyMusic" -n "CoolMusicMod"
+Example: MusicModCreator.exe -m "C:\MyMusic" -n "Cool Music Mod"
 
 + The Mod will be created in 'modpath'. The default path for this is the Stellaris mod folder (e.g. C:\Users\<Username>\Documents\Paradox Interactive\Stellaris\mod)
 + For the tool to work there needs to be a folder present with all of the .ogg-files you want to add to the mod. 

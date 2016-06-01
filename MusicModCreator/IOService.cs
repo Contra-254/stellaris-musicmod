@@ -67,6 +67,7 @@ namespace MusicModCreator
                 throw new ArgumentException(string.Format("No ogg files found in {0}", musicPath));
             }
 
+            Console.WriteLine("Copying {0} files to {1}", oggFiles.Count(), targetPath);
             foreach (var oggFile in oggFiles)
             {
                 if (oggFile != null)
@@ -75,7 +76,7 @@ namespace MusicModCreator
                     var targetFileName = Path.Combine(targetPath, Path.GetFileName(oggFile));
                     try
                     {
-                        File.Copy(oggFile, targetFileName);
+                        File.Copy(oggFile, targetFileName, true);
                     }
                     catch (Exception e)
                     {
