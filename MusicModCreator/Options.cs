@@ -13,7 +13,7 @@ namespace MusicModCreator
         [Option('n', "modname", Required = true, HelpText = "Name of the mod. Can contain whitespaces")]
         public string ModName { get; set; }
 
-        [Option("version", HelpText = "Mod will support this version of Stellaris", DefaultValue = "1.0.3")]
+        [Option("version", HelpText = "Mod will support this version of Stellaris", DefaultValue = "1.1.0")]
         public string Version { get; set; }
 
         [Option("volume", HelpText = "Volume of every song", DefaultValue = "0.62")]
