@@ -21,7 +21,7 @@ namespace MusicModCreator
             }
 
 
-            var targetMusicPath = Path.Combine(result.Value.ModPath, result.Value.ModName.Trim().ToLower(), "music");
+            var targetMusicPath = Path.Combine(result.Value.ModPath, result.Value.ModName.Replace(" ", string.Empty).ToLower(), "music");
             if (!IoService.CreateModSubfolder(targetMusicPath))
             {
                 return;
@@ -36,25 +36,28 @@ namespace MusicModCreator
         private static bool CreateDescriptions(ParserResult<Options> result, string targetMusicPath)
         {
             var modName = result.Value.ModName;
-            var modDescription = DescriptionService.CreateDescription(modName, modName.Trim().ToLower(), result.Value.Version);
+            var modDescription = DescriptionService.CreateDescription(modName, modName.Replace(" ", string.Empty).ToLower(), result.Value.Version);
 
             try
             {
                 var songListing = DescriptionService.CreateSongListing(result.Value.MusicPath, result.Value.Volume, false);
                 var assetListing = DescriptionService.CreateSongListing(result.Value.MusicPath, result.Value.Volume, true);
 
-                var descriptionPath = Path.Combine(result.Value.ModPath, string.Format("{0}.mod", modName.Trim().ToLower()));
+                var descriptionPath = Path.Combine(result.Value.ModPath, string.Format("{0}.mod", modName.Replace(" ", string.Empty).ToLower()));
                 File.WriteAllText(descriptionPath, modDescription);
 
-                var musicModPath = Path.Combine(result.Value.ModPath, modName.Trim().ToLower());
+                var musicModPath = Path.Combine(result.Value.ModPath, modName.Replace(" ", string.Empty).ToLower());
                 
                 var descriptorPath = Path.Combine(musicModPath, "descriptor.mod");
+                Console.WriteLine("Creating descriptor.mod file");
                 File.WriteAllText(descriptorPath, modDescription);
 
                 var songsTxt = Path.Combine(targetMusicPath, "songs.txt");
+                Console.WriteLine("Creating songs.txt file");
                 File.WriteAllText(songsTxt, songListing);
 
                 var songsAsset = Path.Combine(targetMusicPath, "songs.asset");
+                Console.WriteLine("Creating songs.asset file");
                 File.WriteAllText(songsAsset, assetListing);
             }
             catch (Exception e)

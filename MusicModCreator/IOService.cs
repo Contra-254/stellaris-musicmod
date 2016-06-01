@@ -33,7 +33,7 @@ namespace MusicModCreator
                     return false;
                 }
                 
-//                ClearDirectory(path);
+                ClearDirectory(path);
             }
             return true;
         }

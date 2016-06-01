@@ -19,7 +19,7 @@ namespace MusicModCreator
         [Option("volume", HelpText = "Volume of every song", DefaultValue = "0.62")]
         public string Volume { get; set; }
 
-        [Option("modpath", HelpText = "Location where the mod is created")]
+        [Option("modpath", HelpText = "Location where the mod will be created")]
         public string ModPath { get; set; }
     }
 }
