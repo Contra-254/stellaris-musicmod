@@ -56,11 +56,11 @@ namespace MusicModCreator
                 Console.WriteLine("Creating file {0}", descriptorPath);
                 File.WriteAllText(descriptorPath, modDescription);
 
-                var songsTxt = Path.Combine(targetMusicPath, "songs.txt");
+                var songsTxt = Path.Combine(targetMusicPath, string.Format("{0}.txt", modName.Replace(" ", string.Empty).ToLower()));
                 Console.WriteLine("Creating file {0}", songsTxt);
                 File.WriteAllText(songsTxt, songListing);
 
-                var songsAsset = Path.Combine(targetMusicPath, "songs.asset");
+                var songsAsset = Path.Combine(targetMusicPath, string.Format("{0}.asset", modName.Replace(" ", string.Empty).ToLower()));
                 Console.WriteLine("Creating file {0}\r\n", songsAsset);
                 File.WriteAllText(songsAsset, assetListing);
             }
