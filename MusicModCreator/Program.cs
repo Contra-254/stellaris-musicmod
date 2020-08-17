@@ -13,45 +13,66 @@ namespace MusicModCreator
     {
         static void Main(string[] args)
         {
-            var result = Parser.Default.ParseArguments<Options>(args);
-            if (result.Errors.Any() || string.IsNullOrWhiteSpace(result.Value.ModName) 
-                || String.IsNullOrWhiteSpace(result.Value.MusicPath) || !CheckModFolder(result))
-            {
-                return;
-            }
+            var result = CommandLine.Parser.Default.ParseArguments<Options>(args).MapResult((opts) => RunOptionsAndReturnExitCode(opts), //in case parser sucess
+                errs => HandleParseError(errs)); //in  case parser fail;
 
 
-            var targetMusicPath = Path.Combine(result.Value.ModPath, result.Value.ModName.Replace(" ", string.Empty).ToLower(), "music");
-            if (!IoService.CreateModSubfolder(targetMusicPath))
-            {
-                return;
-            }
 
-
-            if (!CreateDescriptions(result, targetMusicPath))
-            {
-                Console.WriteLine("Error: Couldn't create all mod description files");
-                return;
-            }
-
-            IoService.CopyMusicFiles(result.Value.MusicPath, targetMusicPath);
         }
 
-        private static bool CreateDescriptions(ParserResult<Options> result, string targetMusicPath)
+        static int RunOptionsAndReturnExitCode(Options o)
         {
-            var modName = result.Value.ModName;
-            var modDescription = DescriptionService.CreateDescription(modName, modName.Replace(" ", string.Empty).ToLower(), result.Value.Version);
+
+            if ( string.IsNullOrWhiteSpace(o.ModName)
+               || String.IsNullOrWhiteSpace(o.MusicPath) || !CheckModFolder(o))
+            {
+                return -2;
+            }
+            var targetMusicPath = Path.Combine(o.ModPath, o.ModName.Replace(" ", string.Empty).ToLower(), "music");
+            if (!IoService.CreateModSubfolder(targetMusicPath))
+            {
+                Console.WriteLine("Error: Couldn't create Target Folder");
+                return -2;
+            }
+
+
+            if (!CreateDescriptions(o, targetMusicPath))
+            {
+                Console.WriteLine("Error: Couldn't create all mod description files");
+                return -2;
+            }
+
+            IoService.CopyMusicFiles(o.MusicPath, targetMusicPath);
+
+            var exitCode = 0;
+            return exitCode;
+        }
+
+        static int HandleParseError(IEnumerable<Error> errs)
+        {
+            var result = -2;
+            Console.WriteLine("errors {0}", errs.Count());
+            if (errs.Any(x => x is HelpRequestedError || x is VersionRequestedError))
+                result = -1;
+            Console.WriteLine("Exit code {0}", result);
+            return result;
+        }
+
+        private static bool CreateDescriptions(Options result, string targetMusicPath)
+        {
+            var modName = result.ModName;
+            var modDescription = DescriptionService.CreateDescription(modName, modName.Replace(" ", string.Empty).ToLower(), result.Version);
 
             try
             {
-                var songListing = DescriptionService.CreateSongListing(result.Value.MusicPath, result.Value.Volume, false);
-                var assetListing = DescriptionService.CreateSongListing(result.Value.MusicPath, result.Value.Volume, true);
+                var songListing = DescriptionService.CreateSongListing(result.MusicPath, result.Volume, false);
+                var assetListing = DescriptionService.CreateSongListing(result.MusicPath, result.Volume, true);
 
-                var descriptionPath = Path.Combine(result.Value.ModPath, string.Format("{0}.mod", modName.Replace(" ", string.Empty).ToLower()));
+                var descriptionPath = Path.Combine(result.ModPath, string.Format("{0}.mod", modName.Replace(" ", string.Empty).ToLower()));
                 File.WriteAllText(descriptionPath, modDescription);
 
-                var musicModPath = Path.Combine(result.Value.ModPath, modName.Replace(" ", string.Empty).ToLower());
-                
+                var musicModPath = Path.Combine(result.ModPath, modName.Replace(" ", string.Empty).ToLower());
+
                 var descriptorPath = Path.Combine(musicModPath, "descriptor.mod");
                 Console.WriteLine("Creating file {0}", descriptorPath);
                 File.WriteAllText(descriptorPath, modDescription);
@@ -75,17 +96,17 @@ namespace MusicModCreator
 
 
 
-        private static bool CheckModFolder(ParserResult<Options> result)
+        private static bool CheckModFolder(Options result)
         {
-            if (string.IsNullOrWhiteSpace(result.Value.ModPath))
+            if (string.IsNullOrWhiteSpace(result.ModPath))
             {
-                result.Value.ModPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments),
+                result.ModPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments),
                     "Paradox Interactive", "Stellaris", "mod");
             }
 
-            if (!Directory.Exists(result.Value.ModPath))
+            if (!Directory.Exists(result.ModPath))
             {
-                Console.WriteLine(string.Format("Mod-Folder does not exist: {0}", result.Value.ModPath));
+                Console.WriteLine(string.Format("Mod-Folder does not exist: {0}", result.ModPath));
                 return false;
             }
 
